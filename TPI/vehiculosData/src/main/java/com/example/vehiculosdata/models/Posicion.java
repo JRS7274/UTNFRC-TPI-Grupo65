@@ -17,12 +17,15 @@ public class Posicion {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToOne
-    @JoinColumn(name = "vehiculo_id")
+    @ManyToOne
+    @JoinColumn(name = "id_vehiculo")
     private Vehiculo vehiculo;
 
-    private LocalDateTime fecha_hora;
-    private Double latitud;
-    private Double longitud;
+    private LocalDateTime fechaHora;  // Use LocalDateTime for accurate datetime
+
+    @Column(name = "LATITUD")
+    private Double lat;
+    @Column(name = "LONGITUD")
+    private Double lon;
 
 }

@@ -1,9 +1,9 @@
 package com.example.vehiculosdata.controllers;
 
-import com.example.vehiculosdata.models.Modelo;
+
+import com.example.vehiculosdata.models.Posicion;
 import com.example.vehiculosdata.models.Vehiculo;
-import com.example.vehiculosdata.repositories.VehiculoRepository;
-import com.example.vehiculosdata.services.ModeloService;
+import com.example.vehiculosdata.services.VehiculoPosicionService;
 import com.example.vehiculosdata.services.VehiculoService;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.service.spi.ServiceException;
@@ -16,6 +16,8 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/vehiculos")
 public class VehiculoController {
     private VehiculoService vehiculoService;
+    @Autowired
+    private VehiculoPosicionService vehiculoPosicionService;
 
     @Autowired
     public VehiculoController(VehiculoService vehiculoService) {
@@ -69,5 +71,23 @@ public class VehiculoController {
         } catch (ServiceException e) {
             return ResponseEntity.notFound().header("Error", e.getMessage()).build();
         }
+    }
+
+    // Endpoint to retrieve the current position of a vehicle
+    @GetMapping("/{vehiculoId}/current-position")
+    public ResponseEntity<Posicion> getCurrentPosition(@PathVariable Long vehiculoId) {
+        Posicion currentPosition = vehiculoPosicionService.getCurrentPosition(vehiculoId);
+        if (currentPosition == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(currentPosition);
+    }
+
+    @GetMapping("/checkLimits/{vehicleId}")
+    public ResponseEntity<Boolean> checkVehicleLimits(@PathVariable Long vehicleId) {
+        boolean isInLimits = vehiculoService.isVehicleInLimits(vehicleId);
+        System.out.println("Endpoint - Vehicle ID " + vehicleId + " is in limits: " + isInLimits);
+        return ResponseEntity.ok(isInLimits);
+        //Cuando este metodo devuelve true significa que el vehiculo esta dentro de los limites
     }
 }
